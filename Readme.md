@@ -1,9 +1,8 @@
-
-*n8n AI-Powered Feedback Responder
-***Objective
+n8n AI-Powered Feedback Responder
+Objective
 The primary objective of this project is to create a simple and effective automation that instantly processes user feedback submitted through a web form. It uses a Large Language Model (LLM) to classify the user's comment, draft a personalized and professional response, and automatically email that reply back to the user. This ensures timely communication and enhances user engagement without manual intervention.
 
-***Workflow Description
+Workflow Description
 This n8n workflow provides an end-to-end solution for handling customer feedback. The process is as follows:
 
 Form Submission: The workflow is triggered when a user submits their Name, Email, and Comment via a public n8n Form Trigger.
@@ -31,27 +30,57 @@ Send Email: To dispatch the automated reply.
 Setup and Configuration
 To use this workflow, follow these steps:
 
-Import: Import the Smart Router.json file into your n8n instance.
+1. Import Workflow
+Import the Smart Router.json file into your n8n instance.
 
-Configure Credentials:
+2. Configure Credentials
+Google Gemini: In the Message a model node, create a new credential using your Google Gemini API key and connect it.
 
-Google Gemini: Create a new credential using your Google Gemini API key and connect it to the "Message a model" node.
+SMTP: In the Send email node, create a new credential with your SMTP provider's details (Host, Port, User, Password) and connect it.
 
-SMTP: Create a new credential with your SMTP provider's details (Host, Port, User, Password) and connect it to the "Send email" node.
+3. (CRITICAL) Update the Gemini and Email Nodes
+The original workflow does not correctly send the AI's response. You must make the following changes.
 
-CRITICAL - Update Email Node: The provided JSON has a misconfiguration. You must update the Send email node to use the AI's output:
+A. Improve the AI Prompt for Cleaner Output
+To ensure you can easily separate the subject and body for the email, update the prompt in the Message a model node. Change the final instruction in the prompt from:
 
-Subject: Set this field with an expression to get the subject from the AI.
+Please output a JSON object with:
+category: (...)
+email_draft: (...)
 
-Text / HTML: Set this field with an expression to get the email_draft from the "Message a model" node. An example expression for the body would be: ={{ $('Message a model').item.json.json.email_draft }}
+to this:
 
-Activate: Save the workflow and toggle it to Active.
+Please output a JSON object with three keys: "category", "email_subject", and "email_body".
 
-***How to Use
+This will make the AI's output much easier and more reliable to work with.
+
+B. Configure the "Send email" Node
+Update the fields in the Send email node to use expressions that pull data from the previous nodes.
+
+From Email:
+
+your-sender-email@example.com
+
+To Email (Expression):
+
+{{ $('On form submission').first().json["Email address"] }}
+
+Subject (Expression):
+
+{{ $('Message a model').first().json.json.email_subject }}
+
+Text (Expression):
+
+{{ $('Message a model').first().json.json.email_body }}
+
+4. Activate Workflow
+Save the workflow and toggle the switch at the top right to Active.
+
+How to Use
 Once the workflow is active:
 
-Click on the "On form submission" node to get the Production URL.
+Click on the On form submission node to get the Production URL.
 
-Use this URL as the endpoint for your live website form, or share the link directly with users.
+Use this URL as the action/endpoint for your live website form, or share the link directly with users.
 
-Any submission to this form will now trigger the automated AI response.
+Any submission to this form will now trigger the complete, automated AI response.
