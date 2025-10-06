@@ -1,10 +1,9 @@
-Of course. Here is a quick README.md file for your n8n project that explains its objective and how to use it.
 
-n8n AI-Powered Feedback Responder
-Objective
+*n8n AI-Powered Feedback Responder
+***Objective
 The primary objective of this project is to create a simple and effective automation that instantly processes user feedback submitted through a web form. It uses a Large Language Model (LLM) to classify the user's comment, draft a personalized and professional response, and automatically email that reply back to the user. This ensures timely communication and enhances user engagement without manual intervention.
 
-Workflow Description
+***Workflow Description
 This n8n workflow provides an end-to-end solution for handling customer feedback. The process is as follows:
 
 Form Submission: The workflow is triggered when a user submits their Name, Email, and Comment via a public n8n Form Trigger.
@@ -48,7 +47,7 @@ Text / HTML: Set this field with an expression to get the email_draft from the "
 
 Activate: Save the workflow and toggle it to Active.
 
-How to Use
+***How to Use
 Once the workflow is active:
 
 Click on the "On form submission" node to get the Production URL.
