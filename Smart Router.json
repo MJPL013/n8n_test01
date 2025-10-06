@@ -1,0 +1,131 @@
+{
+  "name": "Smart Router",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Feedback/Complaint",
+        "formDescription": "just mention the details and we will mail your feedback and complaints to the concern one ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Your Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email address",
+              "placeholder": "Your Email iD",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Comment Box",
+              "placeholder": "Please write you  feedback and suggestions !",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -336,
+        0
+      ],
+      "id": "07a0c8d3-3bf7-424c-8f5d-c9ccf9d3d840",
+      "name": "On form submission",
+      "webhookId": "ce99fcd5-6bde-44aa-9cbd-ffba57d4fa62"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite-preview-06-17",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite-preview-06-17"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\n\nTake the submitted user comment and details from your form\n\nClassify the comment as Feedback, Complaint, or Suggestion and specify the topic if needed\n\nDraft a professional, friendly email reply on behalf of your social media company named as MysterioSocialConnector\n\nUse {{ $json[\"Name\"] }}, {{ $json[\"Email address\"] }}, and {{ $json[\"Comment Box\"] }} in n8n node expressions.\n\nSystem Prompt (for LLM classification and email drafting):\n\nYou are responding on behalf of a social media agency to a user who submitted a comment through our feedback form.\nFirst, carefully read the user's comment below.\n\nClassify the message as one of: \"Feedback\", \"Complaint\", or \"Suggestion\". If it is a complaint or suggestion, specify the topic briefly (example: “suggestion about our campaign strategy”, “complaint about response time”).\n\nThen, draft a concise and friendly email reply. Your response should thank the user for their input, acknowledge the point they raised, and reflect our professionalism as a social media agency.\n\nUser Details:\n\nName: {{ $json[\"Name\"] }}\n\nEmail: {{ $json[\"Email address\"] }}\n\nComment:\n\"\"\"\n{{ $json[\"Comment Box\"] }}\n\"\"\"\n\nPlease output a JSON object with:\n\ncategory: (Feedback, Complaint, or Suggestion, plus a topic if relevant)\n\nemail_draft: (A well-written, polite response email as our agency, ready to send to the user)"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "45572d6a-8a6b-4b9c-b2df-9d5f9d308b44",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OlPNJ7DnZ5jKpyfK",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "manoj.p@atriauniversity.edu.in",
+        "toEmail": "={{ $('On form submission').item.json[\"Email address\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "185f5e66-a954-46b5-a704-0b3f5c7e2591",
+      "name": "Send email",
+      "webhookId": "a87ea4b4-e015-4076-8282-93bc2c31dd09",
+      "credentials": {
+        "smtp": {
+          "id": "5rn3VSmkl6fEhJoQ",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "20f443c3-f464-486f-a8e8-d186cefa9a63",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2a9990f5a7f19e15ed58a9698c4ca1267d226a88511319d768e422e63515e6cc"
+  },
+  "id": "xo3IPpPuAlB6yvLN",
+  "tags": []
+}
